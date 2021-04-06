@@ -27,3 +27,19 @@ def add_history(request):
             history = KokamaHistory(history_title=history_title, history_text=history_text)
             history.save()
             return redirect('/')
+
+@require_http_methods(["GET"])
+def views_history(request, id):
+    if(request.method == 'GET'):
+        kokama = get_object_or_404(KokamaHistory, pk=id)
+        title = kokama.history_title
+        text = kokama.history_text
+
+        context = {
+            'kokama': kokama,
+            'title': title,
+            'text': text,
+            }
+        return render(request, 'views_history.html', context)
+    else:
+        return HttpResponse('<h1>Erro interno do servidor</h1>', status=500)
