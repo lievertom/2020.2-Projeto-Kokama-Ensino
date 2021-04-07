@@ -19,7 +19,7 @@ class Activity(models.Model):
         )
 
     def __str__(self):
-        return self.id
+        return self.phrase_kokama
 
 
 class Contain(models.Model):

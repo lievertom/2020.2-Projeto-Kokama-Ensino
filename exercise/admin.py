@@ -1,3 +1,6 @@
 from django.contrib import admin
+from .models import Activity, Option, Contain
 
-# Register your models here.
+admin.site.register(Activity)
+admin.site.register(Option)
+admin.site.register(Contain)
