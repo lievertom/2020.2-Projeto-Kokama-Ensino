@@ -15,18 +15,16 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-#from exercise.views import home
 from rest_framework import routers
 from django.conf.urls import include
-from exercise.views import ActivityViewSet # ContainViewSet
+from exercise.views import ActivityViewSet, generate_random_exercises
 
 
 router = routers.DefaultRouter()
-#router.register(r'atividades', ContainViewSet, basename="Atividades")
-router.register(r'atv', ActivityViewSet, basename="atv")
+router.register(r'atividades', ActivityViewSet, basename="atividades")
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    #path('home/', home),
+    path('', generate_random_exercises),
     path('', include(router.urls)),
 ]

@@ -32,3 +32,7 @@ class Contain(models.Model):
         Option,
         on_delete=models.PROTECT
     )
+
+    def __str__(self):
+        return '%s <-> %s' % (self.activity, self.options)
+
