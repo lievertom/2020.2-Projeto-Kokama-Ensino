@@ -13,22 +13,32 @@ def generate_random_exercises(request):
         words = response_words.json()
         #random.shuffle(words)
 
-        for word in words:
-            option = Option(option=word['word_kokama'])
-            option.save()
-
-
-        # words = line.split()
-        # myword = random.choice(words)
-        # option = Option()
-
         response_phrases = requests.get('https://run.mocky.io/v3/4d176167-1c9c-45af-a74e-679f949cbd0e')
         phrases = response_phrases.json()
 
-        for index, phrase in enumerate(phrases, start=1):
+        remove_chars = set([',', '.', '<', '>'])
+
+        for phrase in phrases:
+            # A atvidade
+            # A opção certa
+            # 3 opções aleatórias
             activity = Activity(phrase_portuguese=phrase['phrase_portuguese'], phrase_kokama=phrase['phrase_kokama'])
             activity.save()
 
+            options_list = phrase['phrase_kokama'].split()
+            options = []
+            for untreated_option in options_list:
+                word = ''.join([c for c in untreated_option if c not in remove_chars])
+                option = Option(option=word)
+                options.append(option)
+                option.save()
+            
+            correct_word = random.choice(options)
+            correct_option = Option.objects.filter(option=correct_word)[0]
+            activity.options.add(correct_option)
+
+        for phrase in phrases:
+            activity = Activity.objects.filter(phrase_kokama=phrase['phrase_kokama'])[0]
             options_list = random.sample(list(Option.objects.all()), 3)
             for option in options_list:
                 activity.options.add(option)
