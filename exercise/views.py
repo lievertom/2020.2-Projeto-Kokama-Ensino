@@ -22,6 +22,9 @@ def generate_random_exercises(request):
             # A atvidade
             # A opção certa
             # 3 opções aleatórias
+            ## Não podem repetir entre si x
+            ## Não podem ser palavras da frase em questão
+            ## Não podem repetir a resposta certa
             activity = Activity(phrase_portuguese=phrase['phrase_portuguese'], phrase_kokama=phrase['phrase_kokama'])
             activity.save()
 
@@ -39,7 +42,21 @@ def generate_random_exercises(request):
 
         for phrase in phrases:
             activity = Activity.objects.filter(phrase_kokama=phrase['phrase_kokama'])[0]
+            phrase_words = []
+            for untreated_word in activity.phrase_kokama:
+                phrase_words.append(''.join([c for c in untreated_word if c not in remove_chars]))
+
             options_list = random.sample(list(Option.objects.all()), 3)
+            repeat = True
+            while repeat:
+                for option in options_list:
+                    if(option.option in phrase_words or activity.options.all()[0] in options_list):
+                        options_list = random.sample(list(Option.objects.all()), 3)
+                        repeat = True
+                        break
+                    else:
+                        repeat = False
+    
             for option in options_list:
                 activity.options.add(option)
             activity.save()
