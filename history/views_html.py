@@ -56,7 +56,16 @@ def del_history(request, id):
 @require_http_methods(["GET", "POST"])
 def edit_history(request, id):
     if(request.method == 'GET'):
-        form = AddNewHistory()
+        kokama = get_object_or_404(KokamaHistory, pk=id)
+        title = kokama.history_title
+        text = kokama.history_text
+
+        form = AddNewHistory(
+            initial={
+                "history_title":title,
+                "history_text":text,
+            })
+
         return render(request, 'add_history.html', {'form': form})
     elif(request.method == 'POST'):
         form = AddNewHistory(request.POST)

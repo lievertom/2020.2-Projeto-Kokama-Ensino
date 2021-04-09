@@ -38,10 +38,10 @@
             {% for error in form.history_text.errors %}
             <p style="color: red">{{ error }}</p>
             {% endfor %}
-
+            
+            <label>Texto:</label>
             <div class='input-box'>
                 {{ form.history_text }}
-                <label>Texto:</label>
             </div>
             <input class='submit-buttom' name="submit" type="submit" value='Enviar'>
             {% endblock %}

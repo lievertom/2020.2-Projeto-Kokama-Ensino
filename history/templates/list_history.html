@@ -28,9 +28,9 @@
 
         {% for item in object %}
         <div class='history-list'>
-            <span class="word"><a href="{{item.id}}">{{item}}</a></span>
-            <a class='add-buttom-delete' href="{{item.id}}/delete">Deletar</a>
-            <a class='add-buttom-edit' href="{{item.id}}/edit">Editar</a>
+            <span class="word"><a href="{{item.id}}/visualizar">{{item}}</a></span>
+            <a class='add-buttom-delete' href="{{item.id}}/deletar">Deletar</a>
+            <a class='add-buttom-edit' href="{{item.id}}/editar">Editar</a>
         </div>
         
         {% empty %}

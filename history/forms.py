@@ -11,6 +11,7 @@ class AddNewHistory(forms.Form):
     
     history_text = forms.CharField(
         label='history_text',
+        widget=forms.Textarea,
         error_messages={'required': 'Preencha este campo.'}
     )
     

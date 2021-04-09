@@ -71,7 +71,7 @@ body {
     display: flex;
     flex-direction: column;
     flex-grow: 4;
-    text-align: center;
+    /*! text-align: center; */
     justify-self: center;
     align-self: center;
     width: 400px;
@@ -272,6 +272,10 @@ body {
 
 #id_history_text{
     height: 100px;
+    width: 315px;
+    margin-bottom: 10px;
+    font-size: 14px;
+    letter-spacing: 1px;
 }
 
 .add-buttom-delete:hover {
