@@ -12,7 +12,7 @@ def clean_database():
     Option.objects.all().delete()
     Activity.objects.all().delete()
 
-@require_http_methods(["GET", "POST"])
+@require_http_methods(["GET"])
 def generate_random_exercises(request):
     clean_database()
     if request.user.is_superuser:
