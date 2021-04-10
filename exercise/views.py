@@ -3,7 +3,7 @@ from django.shortcuts import redirect
 import requests
 from .models import Activity, Option, Contain;
 from .serializers import ActivitySerializer
-from django.views.decorators.http import require_GET
+from django.views.decorators.http import require_http_methods
 
 import random
 
@@ -12,7 +12,7 @@ def clean_database():
     Option.objects.all().delete()
     Activity.objects.all().delete()
 
-@require_GET
+@require_http_methods(["GET", "POST"])
 def generate_random_exercises(request):
     clean_database()
     if request.user.is_superuser:
