@@ -1,30 +1,27 @@
 from rest_framework import viewsets, mixins
 from django.shortcuts import redirect
 import requests
-from .models import Activity, Option
+from .models import Activity, Option, Contain;
 from .serializers import ActivitySerializer
 
 import random
 
+def clean_database():
+    Contain.objects.all().delete()
+    Option.objects.all().delete()
+    Activity.objects.all().delete()
+
+
 
 def generate_random_exercises(request):
+    clean_database()
     if request.user.is_superuser:
-        response_words = requests.get('https://run.mocky.io/v3/92f3a2e6-1686-454b-9847-5e625bc5959f')
-        words = response_words.json()
-        #random.shuffle(words)
-
         response_phrases = requests.get('https://run.mocky.io/v3/4d176167-1c9c-45af-a74e-679f949cbd0e')
         phrases = response_phrases.json()
 
         remove_chars = set([',', '.', '<', '>'])
 
         for phrase in phrases:
-            # A atvidade
-            # A opção certa
-            # 3 opções aleatórias
-            ## Não podem repetir entre si x
-            ## Não podem ser palavras da frase em questão
-            ## Não podem repetir a resposta certa
             activity = Activity(phrase_portuguese=phrase['phrase_portuguese'], phrase_kokama=phrase['phrase_kokama'])
             activity.save()
 
@@ -32,9 +29,10 @@ def generate_random_exercises(request):
             options = []
             for untreated_option in options_list:
                 word = ''.join([c for c in untreated_option if c not in remove_chars])
-                option = Option(option=word)
+                option = Option(option=word.lower())
                 options.append(option)
-                option.save()
+                if option not in Option.objects.all():
+                    option.save()
             
             correct_word = random.choice(options)
             correct_option = Option.objects.filter(option=correct_word)[0]
