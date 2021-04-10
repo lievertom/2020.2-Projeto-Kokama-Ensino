@@ -34,6 +34,7 @@ def views_history(request, id):
         kokama = get_object_or_404(KokamaHistory, pk=id)
         title = kokama.history_title
         text = kokama.history_text
+        print(text)
 
         context = {
             'kokama': kokama,

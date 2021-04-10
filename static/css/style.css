@@ -276,6 +276,8 @@ body {
     margin-bottom: 10px;
     font-size: 14px;
     letter-spacing: 1px;
+    width: 311px;
+    height: 145px;
 }
 
 .add-buttom-delete:hover {
