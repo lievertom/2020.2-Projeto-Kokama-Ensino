@@ -5,9 +5,9 @@ services:
     container_name: learn-db
     image: postgres
     environment:
-      - POSTGRES_DB=${POSTGRES_DB}
-      - POSTGRES_USER=${POSTGRES_USER}
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres"]
       interval: 2s
@@ -17,7 +17,7 @@ services:
   web:
     build: .
     container_name: learn-microservice
-    command: bash -c "sh entrypoint.sh"
+    command: python manage.py runserver 0.0.0.0:8001
     volumes:
       - .:/code
     ports:
