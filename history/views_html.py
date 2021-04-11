@@ -26,7 +26,7 @@ def add_history(request):
             history_text = request.POST.get('history_text')
             history = KokamaHistory(history_title=history_title, history_text=history_text)
             history.save()
-            return redirect('/')
+            return redirect('/historia')
 
 @require_http_methods(["GET"])
 def views_history(request, id):
@@ -50,7 +50,7 @@ def del_history(request, id):
     if(request.method == 'GET'):
         emp = KokamaHistory.objects.get(pk = id)
         emp.delete()
-        return redirect('/')
+        return redirect('/historia')
 
     return HttpResponse('Erro ao deletar', status=500)
 
@@ -76,6 +76,6 @@ def edit_history(request, id):
             history.history_title = request.POST.get('history_title')
             history.history_text = request.POST.get('history_text')
             history.save()
-            return redirect('/')
+            return redirect('/historia')
 
-    return redirect('/')
+    return redirect('/historia')
