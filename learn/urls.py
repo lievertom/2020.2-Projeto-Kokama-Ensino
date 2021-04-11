@@ -18,12 +18,12 @@ from django.urls import path
 from rest_framework import routers
 from django.conf.urls import include
 from exercise.views import ActivityViewSet
-# from history.views import KokamaHistoryViewSet
+from history.views import KokamaHistoryViewSet
 
 
 router = routers.DefaultRouter()
 router.register(r'atividades', ActivityViewSet, basename="atividades")
-# router.register(r'historias', KokamaHistoryViewSet, basename="historias")
+router.register(r'historias', KokamaHistoryViewSet, basename="historias")
 
 urlpatterns = [
     path('admin/', admin.site.urls),

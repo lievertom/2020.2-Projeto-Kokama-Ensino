@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+{% load static %}
+<html xml:lang>
+
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Cadastrar História</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+
+<body>
+    <div class='header'>
+        <a href="/">
+            <img alt class='logo'
+                src='https://github.com/fga-eps-mds/2020.2-Projeto-Kokama-Wiki/raw/main/docs/assets/img/logo.png'>
+        </a>
+
+        <a class='logo-text' href="/">Projeto Kokama</a>
+    </div>
+
+    <div class='box-history'>
+        {% block content %} 
+
+        <form action='' method='POST'>
+            {% csrf_token %}
+
+            {% for error in form.history_title.errors %}
+            <p style="color: red">{{ error }}</p>
+            {% endfor %}
+
+            <div class='input-box'>
+                {{ form.history_title }}
+                <label>Título:</label>
+            </div>
+
+            {% for error in form.history_text.errors %}
+            <p style="color: red">{{ error }}</p>
+            {% endfor %}
+            
+            <label>Texto:</label>
+            <div class='input-box'>
+                {{ form.history_text }}
+            </div>
+            <input class='submit-buttom' name="submit" type="submit" value='Enviar'>
+            {% endblock %}
+    </div>
+</body>
+
+</html>
