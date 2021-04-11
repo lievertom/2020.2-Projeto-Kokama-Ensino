@@ -7,17 +7,29 @@ from django.views.decorators.http import require_http_methods
 
 import random
 
-def clean_database():
-    Contain.objects.all().delete()
-    Option.objects.all().delete()
-    Activity.objects.all().delete()
+class ActivityViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
+    queryset = Activity.objects.all()
+    serializer_class = ActivitySerializer
 
-@require_http_methods(["GET"])
-def generate_random_exercises(request):
-    clean_database()
-    if request.user.is_superuser:
-        response_phrases = requests.get('https://run.mocky.io/v3/4d176167-1c9c-45af-a74e-679f949cbd0e')
-        phrases = response_phrases.json()
+    def _get_data(self):
+        url = 'https://run.mocky.io/v3/4d176167-1c9c-45af-a74e-679f949cbd0e'
+        api_request = requests.get(url)
+        try:
+            api_request.raise_for_status()
+            return api_request.json()
+        except:
+            print("\n\nOcorreu um erro na requisição\n\n")
+            return None
+
+    def _clean_database(self):
+        Contain.objects.all().delete()
+        Option.objects.all().delete()
+        Activity.objects.all().delete()
+
+    def generate_random_exercises(self):
+        print("\n\nNew Get Request and database update...\n\n")
+        self._clean_database()
+        phrases = self._get_data()
 
         remove_chars = set([',', '.', '<', '>'])
 
@@ -60,12 +72,3 @@ def generate_random_exercises(request):
             activity.save()
 
         return redirect('atividades/')
-
-    else:
-        return redirect("admin/login/")
-
-
-
-class ActivityViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
-    queryset = Activity.objects.all()
-    serializer_class = ActivitySerializer

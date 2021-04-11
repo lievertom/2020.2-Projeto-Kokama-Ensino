@@ -17,7 +17,7 @@ from django.contrib import admin
 from django.urls import path
 from rest_framework import routers
 from django.conf.urls import include
-from exercise.views import ActivityViewSet, generate_random_exercises
+from exercise.views import ActivityViewSet
 
 
 router = routers.DefaultRouter()
@@ -25,6 +25,14 @@ router.register(r'atividades', ActivityViewSet, basename="atividades")
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', generate_random_exercises),
     path('', include(router.urls)),
 ]
+
+from apscheduler.schedulers.background import BackgroundScheduler
+from exercise.views import ActivityViewSet
+
+print("\n\n\nStarting Scheduler...\n\n\n")
+scheduler = BackgroundScheduler()
+activity = ActivityViewSet()
+scheduler.add_job(activity.generate_random_exercises, "interval", weeks=1, id="update_activities", replace_existing=True)
+scheduler.start()
