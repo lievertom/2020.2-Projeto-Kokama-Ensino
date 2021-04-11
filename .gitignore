@@ -1,4 +1,4 @@
-learn/__pycache__/
-history/__pycache__/
-history/migrations/__pycache__/
-/__pycache__/
+__pycache__/
+migrations/
+.vscode
+**.env
