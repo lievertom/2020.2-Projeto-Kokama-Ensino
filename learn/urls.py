@@ -34,5 +34,5 @@ from exercise.views import ActivityViewSet
 print("\n\n\nStarting Scheduler...\n\n\n")
 scheduler = BackgroundScheduler()
 activity = ActivityViewSet()
-scheduler.add_job(activity.generate_random_exercises, "interval", minutes=1, id="update_activities", replace_existing=True)
+scheduler.add_job(activity.generate_random_exercises, "interval", weeks=1, id="update_activities", replace_existing=True)
 scheduler.start()

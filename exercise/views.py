@@ -3,9 +3,8 @@ from django.shortcuts import redirect
 import requests
 from .models import Activity, Option, Contain;
 from .serializers import ActivitySerializer
-from django.views.decorators.http import require_http_methods
-
 import random
+
 
 class ActivityViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
     queryset = Activity.objects.all()
@@ -22,8 +21,6 @@ class ActivityViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
         except BaseException as e:
             print("\n\nOcorreu um erro na requisição\n\n")
             raise e
-            return None
-        except:
             return None
 
 
@@ -67,11 +64,9 @@ class ActivityViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
                 phrase_words.append(''.join([c for c in untreated_word if c not in self.remove_chars]))
 
             correct_option = activity.options.all()[0]
-            options_list1 = Option.objects.exclude(option=correct_option)
-            options_list2 = options_list1.exclude(option__in=phrase_words)
-            options_list3 = random.sample(list(options_list2), 3)
+            options_list = random.sample(list(Option.objects.exclude(option=correct_option)), 3)
     
-            for option in options_list3:
+            for option in options_list:
                 activity.options.add(option)
             activity.save()
 
