@@ -3,7 +3,10 @@ from django.shortcuts import redirect
 import requests
 from .models import Activity, Option, Contain;
 from .serializers import ActivitySerializer
+import time
 import random
+
+random.seed(time.time())
 
 
 class ActivityViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
