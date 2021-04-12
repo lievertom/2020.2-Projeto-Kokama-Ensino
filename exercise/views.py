@@ -46,6 +46,7 @@ class ActivityViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
 
 
     def generate_random_exercises(self):
+        random.seed(time.time())
         print("\n\nNew GET Request and database update...\n\n")
         phrases = self._get_data()
         self._clean_database()
