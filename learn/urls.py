@@ -15,16 +15,27 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from django.conf.urls import include
 from rest_framework import routers
+from django.conf.urls import include
+from exercise.views import ActivityViewSet
 from history.views import KokamaHistoryViewSet
 
-
 router = routers.DefaultRouter()
-router.register(r'', KokamaHistoryViewSet)
+router.register(r'atividades', ActivityViewSet, basename="atividades")
+router.register(r'historias', KokamaHistoryViewSet, basename="historias")
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('historias/', include(router.urls)),
-    path('',include('history.urls')),
+    path('', include(router.urls)),
+    path('historia/', include('history.urls')),
 ]
+
+
+from apscheduler.schedulers.background import BackgroundScheduler
+from exercise.views import ActivityViewSet
+
+print("\n\n\nStarting Scheduler...\n\n\n")
+scheduler = BackgroundScheduler()
+activity = ActivityViewSet()
+scheduler.add_job(activity.generate_random_exercises, "cron", day_of_week="sun", hour=0, id="update_activities", replace_existing=True)
+scheduler.start()
