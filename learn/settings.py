@@ -6,7 +6,6 @@ https://docs.djangoproject.com/en/3.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.1/ref/settings/
 """
-
 import os
 from decouple import config
 from pathlib import Path
@@ -24,28 +23,27 @@ SECRET_KEY = config('SECRET_KEY',
                     default='lb503%-=26zc*r2imy*4+w$x@wsg@jbp_i8ddt_fo8e-b#4k)@')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
-
-ALLOWED_HOSTS = ['*']
+DEBUG = config('DEBUG', default=False, cast=bool)
 
 ALLOWED_HOSTS = [config('ALLOWED_HOSTS', default='*')]
 
 # Application definition
 
 INSTALLED_APPS = [
+    # Django
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
+    'django.contrib.staticfiles',
 
     # External
     'cloudinary_storage',
-    'django.contrib.staticfiles',
-    'rest_framework',
     'exercise',
     'history',
     'cloudinary',
+    'rest_framework',
 ]
 
 MIDDLEWARE = [
@@ -101,6 +99,10 @@ else:
         }
     }
 
+if ENVIRONMENT == 'HOMOLOGATION':
+    import dj_database_url
+    db_from_env = dj_database_url.config()
+    DATABASES['default'].update(db_from_env)
 
 # Password validation
 # https://docs.djangoproject.com/en/3.1/ref/settings/#auth-password-validators
@@ -124,9 +126,9 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/3.1/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'pt-br'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'America/Sao_Paulo'
 
 USE_I18N = True
 
@@ -151,3 +153,5 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "static"),
 ]
+
+VERSION = config('VERSION', default='0.0')

@@ -1,6 +1,7 @@
 #!/bin/sh
 # entrypoint.sh
 
+python3 manage.py makemigrations
 python3 manage.py makemigrations history exercise
 python3 manage.py migrate
 python3 manage.py migrate --run-syncdb
