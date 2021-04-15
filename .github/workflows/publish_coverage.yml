@@ -42,3 +42,4 @@ jobs:
         CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
       with:
         coverageCommand: coverage report
+        coverageLocations: ${{github.workspace}}/.coverage:coverage
