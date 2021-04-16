@@ -16,7 +16,7 @@ class ActivityViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
     remove_chars = set([',', '.', '<', '>'])
 
     def _get_data(self):
-        url = 'https://run.mocky.io/v3/4d176167-1c9c-45af-a74e-679f949cbd0e'
+        url = 'https://run.mocky.io/v3/af04b301-2138-41b2-abc3-e5374575e660'
         api_request = requests.get(url)
         try:
             api_request.raise_for_status()
@@ -37,7 +37,7 @@ class ActivityViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
         options = []
         for untreated_option in kokama_phrase.split():
             word = ''.join([c for c in untreated_option if c not in self.remove_chars])
-            option = Option(option=word.lower())
+            option = Option(option=word)
             options.append(option)
             if option not in Option.objects.all():
                 option.save()
