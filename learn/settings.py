@@ -41,7 +41,7 @@ INSTALLED_APPS = [
     # External
     'cloudinary_storage',
     'exercise',
-    'history',
+    'story',
     'cloudinary',
     'rest_framework',
 ]

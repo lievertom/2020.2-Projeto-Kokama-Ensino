@@ -16,18 +16,19 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from rest_framework import routers
-from django.conf.urls import include
+from django.conf.urls import include, url
 from exercise.views import ActivityViewSet
-from history.views import KokamaHistoryViewSet
+from story.views import StoryViewSet, add_story
 
 router = routers.DefaultRouter()
-router.register(r'atividades', ActivityViewSet, basename="atividades")
-router.register(r'historias', KokamaHistoryViewSet, basename="historias")
+router.register(r'atividades', ActivityViewSet, basename="activities")
+router.register(r'lista_de_historias', StoryViewSet, basename="stories")
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    url(r'^historia/adicionar_historia/(?P<id>[0-9]*)$', add_story, name="add_story"),
+    path('historia/', include(router.urls)),
     path('', include(router.urls)),
-    path('historia/', include('history.urls')),
 ]
 
 
