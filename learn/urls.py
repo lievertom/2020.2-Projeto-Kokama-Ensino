@@ -18,7 +18,7 @@ from django.urls import path
 from rest_framework import routers
 from django.conf.urls import include, url
 from exercise.views import ActivityViewSet
-from story.views import StoryViewSet, add_story
+from story.views import StoryViewSet
 
 router = routers.DefaultRouter()
 router.register(r'atividades', ActivityViewSet, basename="activities")
@@ -26,16 +26,12 @@ router.register(r'lista_de_historias', StoryViewSet, basename="stories")
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    url(r'^historia/adicionar_historia/(?P<id>[0-9]*)$', add_story, name="add_story"),
     path('historia/', include(router.urls)),
-    path('', include(router.urls)),
 ]
 
 
 from apscheduler.schedulers.background import BackgroundScheduler
-from exercise.views import ActivityViewSet
 
-print("\n\n\nStarting Scheduler...\n\n\n")
 scheduler = BackgroundScheduler()
 activity = ActivityViewSet()
 scheduler.add_job(activity.generate_random_exercises, "cron", day_of_week="sun", hour=0, id="update_activities", replace_existing=True)
