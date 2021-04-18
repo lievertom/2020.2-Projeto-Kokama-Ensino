@@ -4,7 +4,13 @@ import requests
 from .models import Activity, Option, Contain;
 from .serializers import ActivitySerializer
 import time
+from decouple import config
 import random
+from rest_framework.status import (
+    HTTP_500_INTERNAL_SERVER_ERROR,
+)
+from rest_framework.response import Response
+
 
 random.seed(time.time())
 
@@ -16,13 +22,12 @@ class ActivityViewSet(viewsets.ModelViewSet):
     remove_chars = set([',', '.', '<', '>'])
 
     def _get_data(self):
-        url = 'https://run.mocky.io/v3/af04b301-2138-41b2-abc3-e5374575e660'
-        api_request = requests.get(url)
+        url = '{base_url}/{parameter}'.format(base_url = config('TRANSLATE_MICROSERVICE_URL'), parameter = 'traducao/frases')
         try:
-            api_request.raise_for_status()
-            return api_request.json()
-        except BaseException as e:
-            print('\n\nOcorreu um erro na requisição\n\n')
+            response = requests.get(url)
+            response.raise_for_status()
+            return response.json()
+        except Exception as e:
             raise e
 
 
@@ -46,8 +51,10 @@ class ActivityViewSet(viewsets.ModelViewSet):
 
     def generate_random_exercises(self):
         random.seed(time.time())
-        print("\n\nNew GET Request and database update...\n\n")
-        phrases = self._get_data()
+        try:
+            phrases = self._get_data()
+        except:
+            return
         self._clean_database()
 
         for phrase in phrases:
