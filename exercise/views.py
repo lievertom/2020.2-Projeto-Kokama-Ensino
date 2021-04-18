@@ -23,12 +23,9 @@ class ActivityViewSet(viewsets.ModelViewSet):
 
     def _get_data(self):
         url = '{base_url}/{parameter}'.format(base_url = config('TRANSLATE_MICROSERVICE_URL'), parameter = 'traducao/frases')
-        try:
-            response = requests.get(url)
-            response.raise_for_status()
-            return response.json()
-        except Exception as e:
-            raise e
+        response = requests.get(url)
+        response.raise_for_status()
+        return response.json()
 
 
     def _clean_database(self):
@@ -53,7 +50,7 @@ class ActivityViewSet(viewsets.ModelViewSet):
         random.seed(time.time())
         try:
             phrases = self._get_data()
-        except:
+        except Exception:
             return
         self._clean_database()
 
