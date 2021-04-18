@@ -39,11 +39,11 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     # External
-    'cloudinary_storage',
+    'rest_framework',
+
+    # Apps
     'exercise',
     'story',
-    'cloudinary',
-    'rest_framework',
 ]
 
 MIDDLEWARE = [
@@ -139,15 +139,6 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
-
-if ENVIRONMENT != 'DEVELOPMENT':
-    CLOUDINARY_STORAGE = {
-        'CLOUD_NAME': config('CLOUD_NAME'),
-        'API_KEY': config('API_KEY'),
-        'API_SECRET': config('API_SECRET')
-    }
-
-    STATICFILES_STORAGE = 'cloudinary_storage.storage.StaticHashedCloudinaryStorage'
 
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [

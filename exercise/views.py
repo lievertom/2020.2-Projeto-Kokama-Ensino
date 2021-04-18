@@ -62,11 +62,6 @@ class ActivityViewSet(viewsets.ModelViewSet):
 
         for phrase in phrases:
             activity = Activity.objects.filter(phrase_portuguese=phrase['phrase_portuguese'], phrase_kokama=phrase['phrase_kokama'])[0]
-            phrase_words = [
-                ''.join(c for c in untreated_word if c not in self.remove_chars)
-                for untreated_word in activity.phrase_kokama.split()
-            ]
-
             correct_option = activity.options.all()[0]
             options_list = random.sample(list(Option.objects.exclude(option=correct_option)), 3)
 
