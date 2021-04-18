@@ -35,7 +35,7 @@ class ActivityViewSet(viewsets.ModelViewSet):
     def _add_possible_options(self, kokama_phrase):
         options = []
         for untreated_option in kokama_phrase.split():
-            word = ''.join(c for c in untreated_option if c not in self.remove_chars)
+            word = ''.join([c for c in untreated_option if c not in self.remove_chars])
             option = Option(option=word)
             options.append(option)
             if option not in Option.objects.all():
