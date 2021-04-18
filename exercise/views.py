@@ -1,30 +1,31 @@
-from rest_framework import viewsets, mixins
+from rest_framework import viewsets
 from django.shortcuts import redirect
 import requests
 from .models import Activity, Option, Contain;
 from .serializers import ActivitySerializer
 import time
+from decouple import config
 import random
+from rest_framework.status import (
+    HTTP_500_INTERNAL_SERVER_ERROR,
+)
+from rest_framework.response import Response
+
 
 random.seed(time.time())
 
 
-class ActivityViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
+class ActivityViewSet(viewsets.ModelViewSet):
     queryset = Activity.objects.all()
     serializer_class = ActivitySerializer
 
     remove_chars = set([',', '.', '<', '>'])
 
     def _get_data(self):
-        url = 'https://run.mocky.io/v3/af04b301-2138-41b2-abc3-e5374575e660'
-        api_request = requests.get(url)
-        try:
-            api_request.raise_for_status()
-            return api_request.json()
-        except BaseException as e:
-            print("\n\nOcorreu um erro na requisição\n\n")
-            raise e
-            return None
+        url = '{base_url}/{parameter}'.format(base_url = config('TRANSLATE_MICROSERVICE_URL'), parameter = 'traducao/frases')
+        response = requests.get(url)
+        response.raise_for_status()
+        return response.json()
 
 
     def _clean_database(self):
@@ -41,14 +42,16 @@ class ActivityViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
             options.append(option)
             if option not in Option.objects.all():
                 option.save()
-        
+
         return options
 
 
     def generate_random_exercises(self):
         random.seed(time.time())
-        print("\n\nNew GET Request and database update...\n\n")
-        phrases = self._get_data()
+        try:
+            phrases = self._get_data()
+        except Exception:
+            return
         self._clean_database()
 
         for phrase in phrases:
@@ -56,20 +59,16 @@ class ActivityViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
             activity.save()
 
             options = self._add_possible_options(phrase['phrase_kokama'])
-            
+
             correct_option_word = random.choice(options)
             correct_option = Option.objects.filter(option=correct_option_word)[0]
             activity.options.add(correct_option)
 
         for phrase in phrases:
             activity = Activity.objects.filter(phrase_portuguese=phrase['phrase_portuguese'], phrase_kokama=phrase['phrase_kokama'])[0]
-            phrase_words = []
-            for untreated_word in activity.phrase_kokama.split():
-                phrase_words.append(''.join([c for c in untreated_word if c not in self.remove_chars]))
-
             correct_option = activity.options.all()[0]
             options_list = random.sample(list(Option.objects.exclude(option=correct_option)), 3)
-    
+
             for option in options_list:
                 activity.options.add(option)
             activity.save()
