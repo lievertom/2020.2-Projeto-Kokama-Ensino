@@ -28,10 +28,3 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('historia/', include(router.urls)),
 ]
-
-
-from apscheduler.schedulers.background import BackgroundScheduler
-scheduler = BackgroundScheduler()
-activity = ActivityViewSet()
-scheduler.add_job(activity.generate_random_exercises, "cron", day_of_week="sun", hour=0, id="update_activities", replace_existing=True)
-scheduler.start()
