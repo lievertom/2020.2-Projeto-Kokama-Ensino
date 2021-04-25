@@ -21,8 +21,7 @@ class ActivityViewSet(viewsets.ModelViewSet):
 
     remove_chars = set([',', '.', '<', '>'])
 
-    def _get_data(self):
-        url = '{base_url}/{parameter}'.format(base_url = config('TRANSLATE_MICROSERVICE_URL'), parameter = 'traducao/frases')
+    def _get_data(self,url):
         response = requests.get(url)
         response.raise_for_status()
         return response.json()
@@ -49,7 +48,9 @@ class ActivityViewSet(viewsets.ModelViewSet):
     def generate_random_exercises(self):
         random.seed(time.time())
         try:
-            phrases = self._get_data()
+            url = '{base_url}/{parameter}'.format(base_url = config('TRANSLATE_MICROSERVICE_URL'), parameter = 'traducao/frases')
+            phrases = self._get_data(url)
+            
         except Exception:
             return
         self._clean_database()
