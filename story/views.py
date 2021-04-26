@@ -15,6 +15,8 @@ from rest_framework.status import (
 )
 
 
+UNAUTHORIZED_ERROR = 'Você não tem autorização'
+
 @require_http_methods(['GET', 'POST', 'PUT', 'DELETE'])
 def authenticate(request):
     user_ip = request.META['REMOTE_ADDR']
@@ -31,7 +33,7 @@ class StoryViewSet(viewsets.ReadOnlyModelViewSet):
     def create(self, request, *args, **kwargs):
         if authenticate(request).status_code == HTTP_401_UNAUTHORIZED:
             return HttpResponse(
-                'Você não tem autorização',
+                UNAUTHORIZED_ERROR,
                 status=HTTP_403_FORBIDDEN,
             )
         try:
@@ -47,7 +49,7 @@ class StoryViewSet(viewsets.ReadOnlyModelViewSet):
     def update(self, request, *args, **kwargs):
         if authenticate(request).status_code == HTTP_401_UNAUTHORIZED:
             return HttpResponse(
-                'Você não tem autorização',
+                UNAUTHORIZED_ERROR,
                 status=HTTP_403_FORBIDDEN,
             )
         try:
@@ -63,7 +65,7 @@ class StoryViewSet(viewsets.ReadOnlyModelViewSet):
     def destroy(self, request, *args, **kwargs):
         if authenticate(request).status_code == HTTP_401_UNAUTHORIZED:
             return HttpResponse(
-                'Você não tem autorização',
+                UNAUTHORIZED_ERROR,
                 status=HTTP_403_FORBIDDEN,
             )
         try:
