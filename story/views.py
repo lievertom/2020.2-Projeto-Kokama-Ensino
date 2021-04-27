@@ -31,7 +31,7 @@ class StoryViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = StorySerializer
 
     def create(self, request, *args, **kwargs):
-        if authenticate(request).status_code == HTTP_401_UNAUTHORIZED:
+        if authenticate(request).status_code != HTTP_200_OK:
             return HttpResponse(
                 UNAUTHORIZED_ERROR,
                 status=HTTP_403_FORBIDDEN,
@@ -47,7 +47,7 @@ class StoryViewSet(viewsets.ReadOnlyModelViewSet):
         return Response(status=HTTP_204_NO_CONTENT)
 
     def update(self, request, *args, **kwargs):
-        if authenticate(request).status_code == HTTP_401_UNAUTHORIZED:
+        if authenticate(request).status_code != HTTP_200_OK:
             return HttpResponse(
                 UNAUTHORIZED_ERROR,
                 status=HTTP_403_FORBIDDEN,
@@ -63,7 +63,7 @@ class StoryViewSet(viewsets.ReadOnlyModelViewSet):
         return Response(status=HTTP_204_NO_CONTENT)
 
     def destroy(self, request, *args, **kwargs):
-        if authenticate(request).status_code == HTTP_401_UNAUTHORIZED:
+        if authenticate(request).status_code != HTTP_200_OK:
             return HttpResponse(
                 UNAUTHORIZED_ERROR,
                 status=HTTP_403_FORBIDDEN,
