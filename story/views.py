@@ -44,7 +44,7 @@ class StoryViewSet(viewsets.ReadOnlyModelViewSet):
         except Exception:
             return Response(status=HTTP_500_INTERNAL_SERVER_ERROR)
 
-        return Response(status=HTTP_204_NO_CONTENT)
+        return Response(status=HTTP_200_OK)
 
     def update(self, request, *args, **kwargs):
         if authenticate(request).status_code != HTTP_200_OK:
@@ -60,7 +60,7 @@ class StoryViewSet(viewsets.ReadOnlyModelViewSet):
         except Exception:
             return Response(status=HTTP_500_INTERNAL_SERVER_ERROR)
 
-        return Response(status=HTTP_204_NO_CONTENT)
+        return Response(status=HTTP_200_OK)
 
     def destroy(self, request, *args, **kwargs):
         if authenticate(request).status_code != HTTP_200_OK:

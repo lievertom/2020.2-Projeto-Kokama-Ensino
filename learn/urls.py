@@ -27,5 +27,5 @@ router.register(r'lista_de_historias', StoryViewSet, basename="story_list")
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('historia/', include(router.urls)),
+    path('ensino/', include(router.urls)),
 ]
