@@ -4,4 +4,4 @@ from .models import Story
 class StorySerializer(serializers.ModelSerializer):
     class Meta:
         model = Story
-        fields = ['id', 'title', 'text']
+        fields = ['id', 'language', 'title', 'text']
