@@ -1,44 +1,42 @@
 from django.test import TestCase
 from .views import ActivityViewSet
-from .models import Activity, Contain
-from django.urls import reverse
-from rest_framework import status
+from .models import Option, Activity, Contain
 from rest_framework.test import APITestCase
-import APIRequestFactory
-
+import json
+from django.core import serializers
+from .serializers import ActivitySerializer
 
 
 class ActivityViewSetTest(APITestCase):
-    def setUp(self) -> None:
-        self.phrase = ActivityViewSet(field = 'phrase-kokama')
-        self.remover = ActivityViewSet(remove = 'remove')
-        self.serializer = ActivityViewSet(many=True, read_only=True, slug_field='option')
+    # def setUp(self) -> None:
+    #     self.phrase = ActivityViewSet(field = 'phrase-kokama')
+    #     self.remover = ActivityViewSet(remove = 'remove')
+    #     self.serializer = ActivityViewSet(many=True, read_only=True, slug_field='option')
 
-    def test_get_data(self):
-        view = UserDetail.as_view()
-        request = factory.get('http://192.168.0.15:8001/historia/atividades/')
-        response = view(request)
-        response.render()
-        self.assertEqual(response.content, '{ "phrase_kokama" : "phrase_kokama"}')
+    # def test_get_data(self):
+    #     request = {'phrase-kokama':''}
+    #     response = self.client.post('http://192.168.0.15:8001/historia/atividades/', request)
+    #     self.assertEqual(response.status_code, 200)
 
-    # def test_str_clean_database(self):
-    #     phrase = Phrase.objects.create(field = 'phrase-kokama')        
-    #     remover = remover.objects.creature(remove = 'remove')
-    #     expected = 'kokama'
-    #     result = str(self.phrase.remover)
-    #     self.assertEqual(expected, result)
-
-    # def test_add_possible_options(self):
-    #     phrase = Phrase.objects.create(field = 'phrase-kokama')        
-    #     serializer = serializer.objects.creature(many=True, read_only=True, slug_field='option')
-    #     expected = 'kokama'
-    #     result = str(self.phrase.serializer)
-    #     self.assertEqual(expected, result)
-
-    # def test_not_possible_option(self):
-    #     phrase = phrase.objects.create('phrase-kokama')        
-    #     expected = False
-    #     result = str(self.phrase)
-    #     self.assertEqual(expected, result)
+    def test_clean_database(self):
+        
+        request2_2 = Option.objects.create(option='laladk')
+        request3_2 = Activity.objects.create(phrase_portuguese='porr', phrase_kokama='aaaa')
+        request3_2.options.set([request2_2])
+        request1_2 = Contain.objects.create(activity=request3_2, options=request2_2)
+        print("funcionaporfavor!!!!!")
+        print(request2_2)
+        print(request3_2)
+        print(request1_2)
+        ActivityViewSet._clean_database(self)
+        # Contain.objects.all().delete(request1_2)
+        # response1_2 = ActivityViewSet._clean_database(request_2)
+        # response_2 = self.client.post('/historia/atividades/', request_2)
+        self.assertEqual(request3_2, 'texto')
+    
+    def test__add_possible_options(self):
+        request_3 = {'options':'lista', 'word':'3', 'option': 'word'}
+        response_3 = self.client.post('/historia/atividades/', request_3)
+        self.assertEqual(response_3.status_code, 400)
 
     
