@@ -24,15 +24,21 @@ class ActivityViewSetTest(APITestCase):
         request3_2 = Activity.objects.create(phrase_portuguese='porr', phrase_kokama='aaaa')
         request3_2.options.set([request2_2])
         request1_2 = Contain.objects.create(activity=request3_2, options=request2_2)
-        print("funcionaporfavor!!!!!")
-        print(request2_2)
-        print(request3_2)
-        print(request1_2)
-        ActivityViewSet._clean_database(self)
+       
+        Contain.objects.all().delete()
+        variavel = Contain.objects.all()
+        Option.objects.all().delete()
+        Activity.objects.all().delete()
+
+
+        # ActivityViewSet._clean_database(self)
         # Contain.objects.all().delete(request1_2)
         # response1_2 = ActivityViewSet._clean_database(request_2)
         # response_2 = self.client.post('/historia/atividades/', request_2)
-        self.assertEqual(request3_2, 'texto')
+        self.assertEqual(variavel.exists(), False)
+        self.assertEqual(Option.objects.all().exists(), False)
+        self.assertEqual(Activity.objects.all().exists(), False)
+
     
     def test__add_possible_options(self):
         request_3 = {'options':'lista', 'word':'3', 'option': 'word'}

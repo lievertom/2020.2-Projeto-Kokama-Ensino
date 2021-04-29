@@ -33,7 +33,6 @@ class ActivityViewSet(viewsets.ModelViewSet):
         Option.objects.all().delete()
         Activity.objects.all().delete()
 
-
     def _add_possible_options(self, kokama_phrase):
         options = []
         for untreated_option in kokama_phrase.split():
