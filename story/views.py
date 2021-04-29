@@ -17,13 +17,11 @@ from rest_framework.status import (
 
 UNAUTHORIZED_ERROR = 'Você não tem autorização'
 
-@require_http_methods(['GET', 'POST', 'PUT', 'DELETE'])
-def authenticate(request):
-    user_ip = request.META['REMOTE_ADDR']
+def authenticate(user_ip):
     if user_ip in config('ALLOWED_IP_LIST'):
-        return Response(HTTP_200_OK)
+        return True
     else:
-        return Response(status=HTTP_401_UNAUTHORIZED)
+        return False
 
 
 class StoryViewSet(viewsets.ReadOnlyModelViewSet):
@@ -31,7 +29,8 @@ class StoryViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = StorySerializer
 
     def create(self, request, *args, **kwargs):
-        if authenticate(request).status_code != HTTP_200_OK:
+        ip = request.META['REMOTE_ADDR']
+        if not authenticate(ip):
             return HttpResponse(
                 UNAUTHORIZED_ERROR,
                 status=HTTP_403_FORBIDDEN,
@@ -47,7 +46,8 @@ class StoryViewSet(viewsets.ReadOnlyModelViewSet):
         return Response(status=HTTP_200_OK)
 
     def update(self, request, *args, **kwargs):
-        if authenticate(request).status_code != HTTP_200_OK:
+        ip = request.META['REMOTE_ADDR']
+        if not authenticate(ip):
             return HttpResponse(
                 UNAUTHORIZED_ERROR,
                 status=HTTP_403_FORBIDDEN,
@@ -63,7 +63,8 @@ class StoryViewSet(viewsets.ReadOnlyModelViewSet):
         return Response(status=HTTP_200_OK)
 
     def destroy(self, request, *args, **kwargs):
-        if authenticate(request).status_code != HTTP_200_OK:
+        ip = request.META['REMOTE_ADDR']
+        if not authenticate(ip):
             return HttpResponse(
                 UNAUTHORIZED_ERROR,
                 status=HTTP_403_FORBIDDEN,
