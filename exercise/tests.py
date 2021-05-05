@@ -1,38 +1,57 @@
 from django.test import TestCase
-from .views import ActivityViewSet
-from .models import Option, Activity, Contain
-from rest_framework.test import APITestCase
-import json
-from django.core import serializers
-from .serializers import ActivitySerializer
+from django.apps import apps
+from .models import Activity, Option, Contain
+from .apps import ExerciseConfig
 
+# Models
 
-class ActivityViewSetTest(APITestCase):
-    def test_get_data(self):
-        request = {'activity':'fddd','option':'dvfv'}
-        response = self.client.get('/historia/atividades/', request)
-        self.assertEqual(response.status_code, 200)
-
-    # def test_clean_database(self):
+class ActivityModelTest(TestCase):
+    def setUp(self):
+        activity = Activity.objects.create(
+            phrase_kokama='Kokama phrase',
+            phrase_portuguese='Portuguese phrase'
+        )
+        option = Option.objects.create(option='test_option')
+        activity.options.set(4*[option])
+        activity.save()
         
-    #     request2_2 = Option.objects.create(option='laladk')
-    #     request3_2 = Activity.objects.create(phrase_portuguese='porr', phrase_kokama='aaaa')
-    #     request3_2.options.set([request2_2])
-    #     request1_2 = Contain.objects.create(activity=request3_2, options=request2_2)
-       
-    #     Contain.objects.all().delete()
-    #     variavel = Contain.objects.all()
-    #     Option.objects.all().delete()
-    #     Activity.objects.all().delete()
+    def test_activity_str(self):
+        activity = Activity.objects.get(phrase_kokama='Kokama phrase')
+        self.assertEqual(str(activity), 'Kokama phrase')
 
-    #     self.assertEqual(variavel.exists(), False)
-    #     self.assertEqual(Option.objects.all().exists(), False)
-    #     self.assertEqual(Activity.objects.all().exists(), False)
 
-    
-    # def test__add_possible_options(self):
-    #     request_3 = {'options':'lista', 'word':'3', 'option': 'word'}
-    #     response_3 = self.client.post('/historia/atividades/', request_3)
-    #     self.assertEqual(response_3.status_code, 400)
+class OptionModelTest(TestCase):
+    def setUp(self):
+        option = Option.objects.create(option='test_option')
+        
+    def test_option_str(self):
+        option = Option.objects.get(option='test_option')
+        self.assertEqual(str(option), 'test_option')
 
-    
+
+class ContainModelTest(TestCase):
+    def setUp(self):
+        activity = Activity.objects.create(
+            phrase_kokama='Kokama phrase',
+            phrase_portuguese='Portuguese phrase'
+        )
+        option = Option.objects.create(option='test_option')
+        activity.options.set(4*[option])
+        activity.save()
+
+        Contain.objects.create(activity=activity, options=option)
+        
+    def test_contain_str(self):
+        activity = Activity.objects.get(phrase_kokama='Kokama phrase')
+        option = Option.objects.get(option='test_option')
+        contain = Contain.objects.filter(activity=activity, options=option).first()
+        self.assertEqual(str(contain), 'Kokama phrase <-> test_option')
+
+
+# Apps
+
+class ExerciseConfigTest(TestCase):
+
+    def test_apps(self):
+        self.assertEqual(ExerciseConfig.name, 'exercise')
+        self.assertEqual(apps.get_app_config('exercise').name, 'exercise')
