@@ -21,19 +21,14 @@ class ActivityViewSet(viewsets.ModelViewSet):
 
     remove_chars = set([',', '.', '<', '>'])
 
-    def _get_data(self):
-        url = '{base_url}/{parameter}'.format(base_url = config('TRANSLATE_MICROSERVICE_URL'), parameter = 'traducao/frases')
-        response = requests.get(url)
-        response.raise_for_status()
-        return response.json()
+    def get_data(self, url):
+        try:
+            response = requests.get(url)
+        except Exception:
+            return Response(status=HTTP_500_INTERNAL_SERVER_ERROR)
+        return response
 
-
-    def _clean_database(self):
-        Contain.objects.all().delete()
-        Option.objects.all().delete()
-        Activity.objects.all().delete()
-
-    def _add_possible_options(self, kokama_phrase):
+    def add_possible_options(self, kokama_phrase):
         options = []
         for untreated_option in kokama_phrase.split():
             word = ''.join([c for c in untreated_option if c not in self.remove_chars])
@@ -47,12 +42,16 @@ class ActivityViewSet(viewsets.ModelViewSet):
 
     def generate_random_exercises(self):
         random.seed(time.time())
+        url = '{base_url}/{parameter}'.format(base_url = config('TRANSLATE_MICROSERVICE_URL'), parameter = 'frases')
         try:
-            phrases = self._get_data()
+            phrases = self._get_data(url).json()
             
         except Exception:
             return
-        self._clean_database()
+        
+        Contain.objects.all().delete()
+        Option.objects.all().delete()
+        Activity.objects.all().delete()
 
         for phrase in phrases:
             activity = Activity(phrase_portuguese=phrase['phrase_portuguese'], phrase_kokama=phrase['phrase_kokama'])
