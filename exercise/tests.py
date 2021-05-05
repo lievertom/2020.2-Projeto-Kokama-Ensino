@@ -96,7 +96,3 @@ class ActivityViewSetTest(TestCase):
                 if activity.phrase_kokama.find(str(option)):
                     result = True
             self.assertEqual(result, True)
-
-        # Depois
-            # Testar se tem 4 options
-            # Testar se a opção correta está em activity.options[0]
