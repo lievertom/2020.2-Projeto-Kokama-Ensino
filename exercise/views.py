@@ -21,7 +21,6 @@ class ActivityViewSet(viewsets.ModelViewSet):
 
     remove_chars = set([',', '.', '<', '>'])
 
-    @classmethod
     def get_data(self, url):
         try:
             response = requests.get(url)
@@ -29,7 +28,6 @@ class ActivityViewSet(viewsets.ModelViewSet):
             return Response(status=HTTP_500_INTERNAL_SERVER_ERROR)
         return response
 
-    @classmethod
     def add_possible_options(self, kokama_phrase):
         options = []
         for untreated_option in kokama_phrase.split():
@@ -41,7 +39,6 @@ class ActivityViewSet(viewsets.ModelViewSet):
 
         return options
 
-    @classmethod
     def generate_random_exercises(self):
         random.seed(time.time())
         url = '{base_url}/{parameter}'.format(base_url = config('TRANSLATE_MICROSERVICE_URL'), parameter = 'frases/')
