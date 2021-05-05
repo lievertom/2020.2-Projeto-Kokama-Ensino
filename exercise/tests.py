@@ -6,12 +6,14 @@ from .views import ActivityViewSet
 import requests
 from decouple import config
 
+
+KOKAMA_PHRASE = 'Kokama phrase'
 # Models
 
 class ActivityModelTest(TestCase):
     def setUp(self):
         activity = Activity.objects.create(
-            phrase_kokama='Kokama phrase',
+            phrase_kokama=KOKAMA_PHRASE,
             phrase_portuguese='Portuguese phrase'
         )
         option = Option.objects.create(option='test_option')
@@ -19,13 +21,13 @@ class ActivityModelTest(TestCase):
         activity.save()
         
     def test_activity_str(self):
-        activity = Activity.objects.get(phrase_kokama='Kokama phrase')
-        self.assertEqual(str(activity), 'Kokama phrase')
+        activity = Activity.objects.get(phrase_kokama=KOKAMA_PHRASE)
+        self.assertEqual(str(activity), KOKAMA_PHRASE)
 
 
 class OptionModelTest(TestCase):
     def setUp(self):
-        option = Option.objects.create(option='test_option')
+        Option.objects.create(option='test_option')
         
     def test_option_str(self):
         option = Option.objects.get(option='test_option')
@@ -35,7 +37,7 @@ class OptionModelTest(TestCase):
 class ContainModelTest(TestCase):
     def setUp(self):
         activity = Activity.objects.create(
-            phrase_kokama='Kokama phrase',
+            phrase_kokama=KOKAMA_PHRASE,
             phrase_portuguese='Portuguese phrase'
         )
         option = Option.objects.create(option='test_option')
@@ -45,10 +47,10 @@ class ContainModelTest(TestCase):
         Contain.objects.create(activity=activity, options=option)
         
     def test_contain_str(self):
-        activity = Activity.objects.get(phrase_kokama='Kokama phrase')
+        activity = Activity.objects.get(phrase_kokama=KOKAMA_PHRASE)
         option = Option.objects.get(option='test_option')
         contain = Contain.objects.filter(activity=activity, options=option).first()
-        self.assertEqual(str(contain), 'Kokama phrase <-> test_option')
+        self.assertEqual(str(contain), KOKAMA_PHRASE + ' <-> test_option')
 
 
 # Apps
