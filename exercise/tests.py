@@ -70,17 +70,33 @@ class ActivityViewSetTest(TestCase):
 
     def test_get_data(self):
         correct_url = '{base_url}/{parameter}'.format(base_url = config('TRANSLATE_MICROSERVICE_URL'), parameter = 'frases/')
-        response = ActivityViewSet.get_data(self, correct_url)
+        response = ActivityViewSet.get_data(correct_url)
         self.assertEqual(response.status_code, 200)
 
-        response = ActivityViewSet.get_data(self, 'wrong_url')
+        response = ActivityViewSet.get_data('wrong_url')
         self.assertEqual(response.status_code, 500)
 
     def test_add_possible_options(self):
         kokama_phrase = 'I, love, panara <a lot>.'
         expected = ['I', 'love', 'panara', 'a', 'lot']
-        options = ActivityViewSet.add_possible_options(self, kokama_phrase)
+        options = ActivityViewSet.add_possible_options(kokama_phrase)
         result = []
         for option in options:
             result.append(str(option))
         self.assertEqual(result, expected)
+
+    def test_generate_random_exercises(self):
+        response = ActivityViewSet.generate_random_exercises()
+
+        self.assertEqual(response.status_code, 500)
+
+        for activity in Activity.objects.all():
+            self.assertEqual(activity.options.all().count(), 4)
+            for option in activity.options.all():
+                if activity.phrase_kokama.find(str(option)):
+                    result = True
+            self.assertEqual(result, True)
+
+        # Depois
+            # Testar se tem 4 options
+            # Testar se a opção correta está em activity.options[0]
