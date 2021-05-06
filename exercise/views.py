@@ -8,6 +8,7 @@ from decouple import config
 import random
 from rest_framework.status import (
     HTTP_500_INTERNAL_SERVER_ERROR,
+    HTTP_200_OK,
 )
 from rest_framework.response import Response
 
@@ -28,6 +29,7 @@ class ActivityViewSet(viewsets.ModelViewSet):
             return Response(status=HTTP_500_INTERNAL_SERVER_ERROR)
         return response
 
+
     def add_possible_options(self, kokama_phrase):
         options = []
         for untreated_option in kokama_phrase.split():
@@ -40,46 +42,43 @@ class ActivityViewSet(viewsets.ModelViewSet):
         return options
 
     def generate_random_exercises(self, url):
+        ViewSet = ActivityViewSet()
         random.seed(time.time())
         try:
-            phrases = self.get_data(url).json()
+            phrases = ViewSet.get_data(url).json()
         except Exception:
-            try:
-                phrases = self.get_data(self, url).json()
-            except Exception:
-                return Response(status=HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response(status=HTTP_500_INTERNAL_SERVER_ERROR)
         
-        Contain.objects.all().delete()
-        Option.objects.all().delete()
-        Activity.objects.all().delete()
+        # SQLite does not handle many operations at once
+        for contain in Contain.objects.all():
+            contain.delete()
+        for option in Option.objects.all():
+            option.delete()
+        for activity in Activity.objects.all():
+            activity.delete()
 
         for phrase in phrases:
-            activity = Activity(phrase_portuguese=phrase['phrase_portuguese'], phrase_kokama=phrase['phrase_kokama'])
-            activity.save()
+            activity = Activity.objects.create(phrase_portuguese=phrase['phrase_portuguese'], phrase_kokama=phrase['phrase_kokama'])
 
-            try:
-                options = self.add_possible_options(phrase['phrase_kokama'])
-            except Exception:
-                options = self.add_possible_options(self, phrase['phrase_kokama'])
-            correct_option_word = random.choice(options)
-            correct_option = Option.objects.filter(option=correct_option_word)[0]
+            options = ViewSet.add_possible_options(activity.phrase_kokama)
+            correct_option = random.choice(options)
             activity.options.add(correct_option)
 
-        for phrase in phrases:
-            activity = Activity.objects.filter(phrase_portuguese=phrase['phrase_portuguese'], phrase_kokama=phrase['phrase_kokama'])[0]
-            correct_option = activity.options.all()[0]
+        for activity in Activity.objects.all():
+            correct_option = str(activity.options.all().first())
             filtered_options = []
-            for option in Option.objects.exclude(option=correct_option):
-                if activity.phrase_kokama.find(str(option)) != -1:
-                    filtered_options.append(option)
-            options_list = random.sample(filtered_options, 3)
 
+            for option in Option.objects.exclude(option=correct_option):
+                if activity.phrase_kokama.find(str(option)) == -1:
+                    filtered_options.append(option)
+
+            options_list = random.sample(filtered_options, 3)
             for option in options_list:
                 activity.options.add(option)
 
             activity.save()
 
-        return redirect('atividades/')
+        return Response(status=HTTP_200_OK)
 
 
     def run(self):

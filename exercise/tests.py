@@ -8,6 +8,8 @@ from decouple import config
 
 
 KOKAMA_PHRASE = 'Kokama phrase'
+TEST_OPTION = 'test_option'
+
 # Models
 
 class ActivityModelTest(TestCase):
@@ -16,22 +18,36 @@ class ActivityModelTest(TestCase):
             phrase_kokama=KOKAMA_PHRASE,
             phrase_portuguese='Portuguese phrase'
         )
-        option = Option.objects.create(option='test_option')
-        activity.options.set(4*[option])
+    
+        for i in range(4):
+            option = Option.objects.create(option=TEST_OPTION+'_{}'.format(i))
+            activity.options.add(option)
+
         activity.save()
         
     def test_activity_str(self):
         activity = Activity.objects.get(phrase_kokama=KOKAMA_PHRASE)
         self.assertEqual(str(activity), KOKAMA_PHRASE)
 
+    def test_activity_options_length(self):
+        activity = Activity.objects.get(phrase_kokama=KOKAMA_PHRASE)
+        self.assertEqual(activity.options.all().count(), 4)
+        
 
 class OptionModelTest(TestCase):
     def setUp(self):
-        Option.objects.create(option='test_option')
+        Option.objects.create(option=TEST_OPTION)
         
     def test_option_str(self):
-        option = Option.objects.get(option='test_option')
-        self.assertEqual(str(option), 'test_option')
+        option = Option.objects.get(option=TEST_OPTION)
+        self.assertEqual(str(option), TEST_OPTION)
+
+    def test_option_max_length(self):
+        option_correct = Option.objects.get(option=TEST_OPTION)
+        self.assertLessEqual(len(option_correct.option), 50)
+
+        option_fail = Option.objects.create(option='option with more than max_length(fifty) characters in it')
+        self.assertGreater(len(option_fail.option), 50)
 
 
 class ContainModelTest(TestCase):
@@ -40,7 +56,7 @@ class ContainModelTest(TestCase):
             phrase_kokama=KOKAMA_PHRASE,
             phrase_portuguese='Portuguese phrase'
         )
-        option = Option.objects.create(option='test_option')
+        option = Option.objects.create(option=TEST_OPTION)
         activity.options.set(4*[option])
         activity.save()
 
@@ -48,9 +64,9 @@ class ContainModelTest(TestCase):
         
     def test_contain_str(self):
         activity = Activity.objects.get(phrase_kokama=KOKAMA_PHRASE)
-        option = Option.objects.get(option='test_option')
+        option = Option.objects.get(option=TEST_OPTION)
         contain = Contain.objects.filter(activity=activity, options=option).first()
-        self.assertEqual(str(contain), KOKAMA_PHRASE + ' <-> test_option')
+        self.assertEqual(str(contain), KOKAMA_PHRASE + ' <-> ' + TEST_OPTION)
 
 
 # Apps
