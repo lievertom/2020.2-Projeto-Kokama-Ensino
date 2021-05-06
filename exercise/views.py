@@ -42,10 +42,10 @@ class ActivityViewSet(viewsets.ModelViewSet):
         return options
 
     def generate_random_exercises(self, url):
-        ViewSet = ActivityViewSet()
+        view_set = ActivityViewSet()
         random.seed(time.time())
         try:
-            phrases = ViewSet.get_data(url).json()
+            phrases = view_set.get_data(url).json()
         except Exception:
             return Response(status=HTTP_500_INTERNAL_SERVER_ERROR)
         
@@ -60,7 +60,7 @@ class ActivityViewSet(viewsets.ModelViewSet):
         for phrase in phrases:
             activity = Activity.objects.create(phrase_portuguese=phrase['phrase_portuguese'], phrase_kokama=phrase['phrase_kokama'])
 
-            options = ViewSet.add_possible_options(activity.phrase_kokama)
+            options = view_set.add_possible_options(activity.phrase_kokama)
             correct_option = random.choice(options)
             activity.options.add(correct_option)
 
