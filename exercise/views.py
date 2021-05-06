@@ -39,13 +39,15 @@ class ActivityViewSet(viewsets.ModelViewSet):
 
         return options
 
-    def generate_random_exercises(self):
+    def generate_random_exercises(self, url):
         random.seed(time.time())
-        url = '{base_url}/{parameter}'.format(base_url = config('TRANSLATE_MICROSERVICE_URL'), parameter = 'frases/')
         try:
             phrases = self.get_data(url).json()
         except Exception:
-            return Response(status=HTTP_500_INTERNAL_SERVER_ERROR)
+            try:
+                phrases = self.get_data(self, url).json()
+            except Exception:
+                return Response(status=HTTP_500_INTERNAL_SERVER_ERROR)
         
         Contain.objects.all().delete()
         Option.objects.all().delete()
@@ -55,7 +57,10 @@ class ActivityViewSet(viewsets.ModelViewSet):
             activity = Activity(phrase_portuguese=phrase['phrase_portuguese'], phrase_kokama=phrase['phrase_kokama'])
             activity.save()
 
-            options = self.add_possible_options(phrase['phrase_kokama'])
+            try:
+                options = self.add_possible_options(phrase['phrase_kokama'])
+            except Exception:
+                options = self.add_possible_options(self, phrase['phrase_kokama'])
             correct_option_word = random.choice(options)
             correct_option = Option.objects.filter(option=correct_option_word)[0]
             activity.options.add(correct_option)
@@ -75,3 +80,8 @@ class ActivityViewSet(viewsets.ModelViewSet):
             activity.save()
 
         return redirect('atividades/')
+
+
+    def run(self):
+        url = '{base_url}/{parameter}'.format(base_url = config('TRANSLATE_MICROSERVICE_URL'), parameter = 'frases/')
+        self.generate_random_exercises(url)

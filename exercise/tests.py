@@ -67,29 +67,29 @@ class ExerciseConfigTest(TestCase):
 class ActivityViewSetTest(TestCase):
         
     remove_chars = set([',', '.', '<', '>'])
+    mocked_url = 'https://6093298ca7e53a00179508bb.mockapi.io/frases'
 
     def test_get_data(self):
-        correct_url = '{base_url}/{parameter}'.format(base_url = config('TRANSLATE_MICROSERVICE_URL'), parameter = 'frases/')
-        response = ActivityViewSet.get_data(self, correct_url)
+        response = ActivityViewSet.get_data(ActivityViewSet, self.mocked_url)
         self.assertEqual(response.status_code, 200)
 
-        response = ActivityViewSet.get_data(self, 'wrong_url')
+        response = ActivityViewSet.get_data(ActivityViewSet, 'wrong_url')
         self.assertEqual(response.status_code, 500)
 
     def test_add_possible_options(self):
         kokama_phrase = 'I, love, panara <a lot>.'
         expected = ['I', 'love', 'panara', 'a', 'lot']
-        options = ActivityViewSet.add_possible_options(self, kokama_phrase)
+        options = ActivityViewSet.add_possible_options(ActivityViewSet, kokama_phrase)
         result = []
         for option in options:
             result.append(str(option))
         self.assertEqual(result, expected)
 
     def test_generate_random_exercises(self):
-        response = ActivityViewSet.generate_random_exercises(self)
-
+        response = ActivityViewSet.generate_random_exercises(ActivityViewSet, 'wrong_url')
         self.assertEqual(response.status_code, 500)
 
+        ActivityViewSet.generate_random_exercises(ActivityViewSet, self.mocked_url)
         for activity in Activity.objects.all():
             self.assertEqual(activity.options.all().count(), 4)
             for option in activity.options.all():
