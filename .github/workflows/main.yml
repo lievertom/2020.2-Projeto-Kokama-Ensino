@@ -33,4 +33,4 @@ jobs:
           prerelease: true
           title: "pre-release"
           files: |
-            fga-eps-mds-2020_2-Projeto-Kokama-Traducao-${{ steps.date.outputs.date }}.json
+            fga-eps-mds-2020_2-Projeto-Kokama-Traducao-${{ steps.date.outputs.date }}.json 
